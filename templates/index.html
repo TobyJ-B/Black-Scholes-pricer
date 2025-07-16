@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Black-Scholes Pricing</title>
+</head>
+<body>
+    <h1>Black-Scholes option pricing</h1>
+    <form method="POST">
+        Ticker: <input type="text" name="ticker"><br>
+        Current Price: <input type="text" name="price"><br>    
+        Strike price: <input type="text" name="strike"><br>
+        Time to Expiration (years): <input type="text" name="time_To_Expire"><br>
+        Volatility: <input type="text" name="volatility"><br>
+        Interest Rate: <input type="text" name="interest_Rate"><br>
+        <input type="submit" value="Calculate">
+    </form>
+    {% if call is not none and put is not none %}
+        <h2>Results:</h2>
+        <p>Call Price: ${{ call }}</p>
+        <p>Put Price: ${{ put }}</p>
+    {% endif %}
+
+	<h2>Greeks:</h2>
+	<p>Delta Call: {{delta_call}}</p>
+	<p>Delta Put: {{delta_put}}</p>
+	<p>Gamma: {{gamma}}</p>
+	<p>Vega: {{vega}}</p>
+	<p>Theta Call: {{theta_call}}</p>
+	<p>Theta Put: {{theta_put}}</p>
+	<p>Rho Call: {{rho_call}}</p>
+	<p>Rho Put: {{rho_put}}</p>
+
+
+</body>
+</html>
