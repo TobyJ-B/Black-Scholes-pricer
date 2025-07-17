@@ -3,34 +3,68 @@
 <head>
     <meta charset="UTF-8" />
     <title>Black-Scholes Pricing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='mainpage.css') }}">
 </head>
 <body>
-    <h1>Black-Scholes option pricing</h1>
-    <form method="POST">
-        Ticker: <input type="text" name="ticker"><br>
-        Current Price: <input type="text" name="price"><br>    
-        Strike price: <input type="text" name="strike"><br>
-        Time to Expiration (years): <input type="text" name="time_To_Expire"><br>
-        Volatility: <input type="text" name="volatility"><br>
-        Interest Rate: <input type="text" name="interest_Rate"><br>
+    <h1>Black-Scholes Option Pricing</h1>
+    <form method="POST" id="pricer-form">
+        <label>Ticker: <input type="text" name="ticker" id="ticker" placeholder="e.g., NVDA" oninput="debounceFetchStock()"></label>
+        <div id="price-display">Stock Price: Fetching...</div>
+        <label>Strike Price: <input type="number" step="0.01" name="strike" required></label>
+        <label>Time to Expiration (years): <input type="number" step="0.01" name="time_To_Expire" required></label>
+        <label>Volatility: <input type="number" step="0.01" name="volatility" required></label>
+        <label>Interest Rate: <input type="number" step="0.01" name="interest_Rate" required></label>
         <input type="submit" value="Calculate">
     </form>
-    {% if call is not none and put is not none %}
-        <h2>Results:</h2>
-        <p>Call Price: ${{ call }}</p>
-        <p>Put Price: ${{ put }}</p>
+    {% if error %}
+        <p style="color:red">{{ error }}</p>
     {% endif %}
+    {% if call is not none and put is not none %}
+        <div class="results">
+            <h2>Results for {{ stock_data.ticker }} (Price: {{ stock_data.price }})</h2>
+            <p>Call Price: ${{ call }}</p>
+            <p>Put Price: ${{ put }}</p>
+        </div>
+            <div class="greeks">
+                <h2>Greeks:</h2>
+                <p>Delta Call: {{ delta_call }}</p>
+                <p>Delta Put: {{ delta_put }}</p>
+                <p>Gamma: {{ gamma }}</p>
+                <p>Vega: {{ vega }}</p>
+                <p>Theta Call: {{ theta_call }}</p>
+                <p>Theta Put: {{ theta_put }}</p>
+                <p>Rho Call: {{ rho_call }}</p>
+                <p>Rho Put: {{ rho_put }}</p>
+            </div>
+    {% endif %}
+    <script>
+        let debounceTimeout;
+        function debounceFetchStock() {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(fetchStock, 500);
+        }
 
-	<h2>Greeks:</h2>
-	<p>Delta Call: {{delta_call}}</p>
-	<p>Delta Put: {{delta_put}}</p>
-	<p>Gamma: {{gamma}}</p>
-	<p>Vega: {{vega}}</p>
-	<p>Theta Call: {{theta_call}}</p>
-	<p>Theta Put: {{theta_put}}</p>
-	<p>Rho Call: {{rho_call}}</p>
-	<p>Rho Put: {{rho_put}}</p>
-
-
+        async function fetchStock() {
+            const ticker = document.getElementById("ticker").value;
+            const priceDisplay = document.getElementById("price-display");
+            if (ticker.length < 1) {
+                priceDisplay.textContent = "Stock Price: Enter a ticker";
+                return;
+            }
+            try {
+                const response = await fetch(`/fetch_stock/${ticker}`);
+                const data = await response.json();
+                if (data.error) {
+                    priceDisplay.textContent = "Stock Price: Error";
+                    alert(data.error);
+                } else {
+                    priceDisplay.textContent = `Stock Price: $${data.price}`;
+                }
+            } catch (error) {
+                priceDisplay.textContent = "Stock Price: Error";
+                alert("Error fetching stock data");
+            }
+        }
+    </script>
 </body>
 </html>
