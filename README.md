@@ -22,21 +22,19 @@ This was mainly to deepen my understanding on flask, the black scholes model, us
 
 ## Installation
 1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/yourusername/black-scholes-pricing.git
-   cd black-scholes-pricing
-   ```
-
+```bash
+git clone https://github.com/yourusername/black-scholes-pricing.git
+cd black-scholes-pricing
+```
 2. **Create a virtual environment**:
-  ```bash
-  python -m venv venv
-  source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 3.**Install dependencies**:
 ```bash
 pip install flask numpy scipy yfinance
 ```
-
 4.**Run**:
 ```bash
 python main.py
